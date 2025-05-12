@@ -6,13 +6,13 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
+from dotenv import load_dotenv
 
 # — Load env vars (on Vercel these come from the dashboard) —
-from dotenv import load_dotenv
 load_dotenv()
 
 # — Initialize Pinecone & index —
-pc        = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 index_name = "resume-index"
 if not pc.has_index(index_name):
     pc.create_index(
@@ -24,7 +24,7 @@ if not pc.has_index(index_name):
 pinecone_index = pc.Index(index_name)
 
 # — Embeddings + vectorstore —
-embeddings  = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 vectorstore = PineconeVectorStore(index=pinecone_index, embedding=embeddings)
 
 # — Prompt template + LLM —
@@ -42,7 +42,7 @@ Answer:
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.5)
 
-# — FastAPI app —
+# — FastAPI app setup —
 app = FastAPI()
 
 class Query(BaseModel):
